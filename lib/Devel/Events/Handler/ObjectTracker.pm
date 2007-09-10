@@ -118,11 +118,11 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 		),
 	);
 
-	$gen->handle_global_bless(); # start generating events
+	$gen->enable(); # start generating events
 
 	$code->();
 
-	$gen->clear_global_bless();
+	$gen->disable();
 
 	# live_objects is a Tie::RefHash::Weak hash
 
