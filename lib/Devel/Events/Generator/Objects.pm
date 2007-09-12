@@ -108,7 +108,6 @@ sub object_bless {
 sub object_destroy {
 	my ( $self, $object, @args ) = @_;
 
-
 	$self->generate_event( object_destroy => object => $object, @args );
 
 	$self->untrack_object( $object );
