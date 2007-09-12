@@ -158,7 +158,7 @@ Adds an entry in the C<live_objects> table.
 
 Munges event data into an entry for the C<live_objects> table.
 
-=item object_destroy
+=item handle_object_destroy
 
 Decrements the C<class_counters> counter.
 
