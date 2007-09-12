@@ -99,23 +99,13 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 
 =head1 SYNOPSIS
 
-	use Devel::Cycle;
-	use Data::Dumper;
-
 	use Devel::Events::Handler::ObjectTracker;
-	use Devel::Events::Filter::Stamp;
-	use Devel::Events::Filter::RemoveFields;
 	use Devel::Events::Generator::Objects;
 
 	my $tracker = Devel::Events::Handler::ObjectTracker->new();
 
 	my $gen = Devel::Events::Generator::Objects->new(
-		handler => Devel::Events::Filter::Stamp->new(
-			handler => Devel::Events::Filter::RemoveFields->new(
-				fields => [qw/generator/], # don't need to have a ref to $gen in each event
-				handler => $tracker,
-			),
-		),
+		handler => $tracker,
 	);
 
 	$gen->enable(); # start generating events
@@ -124,22 +114,60 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 
 	$gen->disable();
 
-	# live_objects is a Tie::RefHash::Weak hash
-
-	my @leaked_objects = keys %{ $tracker->live_objects };
-
-	print "leaked ", scalar(@leaked_objects), " objects\n";
-
-	foreach my $object ( @leaked_objects ) {
-		print "Leaked object: $object\n";
-
-		# the event that generated it
-		print Dumper( $object, $tracker->live_object->{$object} );
-
-		find_cycle( $object );
-	}
+	use Data::Dumper;
+	warn Dumper($gen->live_objects);
 
 =head1 DESCRIPTION
+
+This object will keep track of every object created and every object destroyed
+based on the C<object_bless> and C<object_destroy> events. Reblessing is
+accounted for.
+
+This handler doesn't perform any magical stuff,
+L<Devel::Events::Generator::Objects> is responsible for raising the proper
+events.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item live_objects
+
+A L<Tie::RefHash::Weak> hash that keeps an index of every live object and the
+C<object_bless> event that created it.
+
+=item class_counters
+
+Keeps a count of the live instances per class, much like
+L<Devel::Leak::Object>.
+
+=item object_to_class
+
+USed to maintain the C<class_counters> hash.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item new_event @event
+
+Delegates to C<handle_object_bless> or C<handle_object_destroy>
+
+=item handle_object_bless @event
+
+Adds an entry in the C<live_objects> table.
+
+=item event_to_entry @event
+
+Munges event data into an entry for the C<live_objects> table.
+
+=item object_destroy
+
+Decrements the C<class_counters> counter.
+
+=back
 
 =cut
 
