@@ -15,7 +15,6 @@ WriteMakefile(
 		'Tie::RefHash::Weak' => '0.06',
 		'Variable::Magic'    => '0.04',
 		'Task::Weaken'       => 0,
-		'Test::Exception'    => 0,
 		'Test::use::ok'      => 0,
 	},
 );

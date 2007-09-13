@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Test::More 'no_plan';
-use Test::Exception;
 
 use ok 'Devel::Events::Generator::Objects';
 
@@ -12,7 +11,8 @@ use Devel::Events::Handler::Callback;
 
 my $file = quotemeta(__FILE__);
 
-throws_ok { bless "foo", "bar" } qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors";
+eval { bless "foo", "bar" };
+like( $@, qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors");
 
 my @events;
 
@@ -36,7 +36,8 @@ is( @events, 0, "no events" );
 
 $gen->enable();
 
-throws_ok { bless "foo", "bar" } qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors after registring handler either";
+eval { bless "foo", "bar" };
+like( $@, qr/^Can't bless non-reference value at $file line \d+/, "bless doesn't poop errors after registring handler either" );
 
 is( @events, 0, "no events" );
 
