@@ -56,11 +56,11 @@ sub handle_object_bless {
 	} else {
 		# new object
 		my $entry = $self->event_to_entry( %args );
-		$self->live_objects->{$object} = $entry;
+		( tied %{ $self->live_objects } )->STORE( $object, $entry ); # FIXME hash access triggers overload +0
 	}
 
 	# we need this because in object_destroy it's not blessed anymore
-	$self->object_to_class->{$object} = $class;
+	( tied %{ $self->object_to_class } )->STORE( $object, $class );
 }
 
 sub event_to_entry {
@@ -76,8 +76,9 @@ sub handle_object_destroy {
 	
 	my $object = $args{object};
 
-	delete $self->live_objects->{$object}; # it will delete itself... is this necessary?
-	my $class = delete $self->object_to_class->{$object};
+	( tied %{ $self->live_objects } )->DELETE($object); # it will delete itself... is this necessary?
+
+	my $class = ( tied %{ $self->object_to_class } )->DELETE($object) || return;
 
 	$self->class_counters->{$class}--;
 }
