@@ -122,8 +122,9 @@ sub generate_event {
 use constant tracker_magic => Variable::Magic::wizard(
 	free => sub {
 		my ( $object, $objs ) = @_;
-		foreach my $self ( @{ $objs || [] } ) {
-			$self->object_destroy( $object ) if defined $self; # might disappear in global destruction
+		local $@;
+		foreach my $self ( grep { defined } @{ $objs || [] } ) {
+			eval { $self->object_destroy( $object ) } # might disappear in global destruction
 		}
 	},
 	data => sub {
