@@ -52,12 +52,12 @@ is_deeply(
 	\@events,
 	[
 		[ object_bless => (
+			generator => "$gen",
 			object    => $obj_str,
 			old_class => undef,
 			package   => "main",
 			file      => __FILE__,
 			line      => $line,
-			generator => "$gen"
 		) ],
 	],
 	"event log",
@@ -74,12 +74,12 @@ is_deeply(
 	\@events,
 	[
 		[ object_bless => (
+			generator => "$gen",
 			object    => $obj_str,
 			old_class => "Some::Class",
 			package   => "main",
 			file      => __FILE__,
 			line      => $line,
-			generator => "$gen"
 		) ],
 	],
 	"event log",
@@ -96,7 +96,7 @@ no warnings 'uninitialized'; # wtf?!
 is_deeply(
 	\@events,
 	[
-		[ object_destroy => ( object => $hash_str, generator => "$gen" ) ],
+		[ object_destroy => ( generator => "$gen", object => $hash_str ) ],
 	],
 	"event log",
 );

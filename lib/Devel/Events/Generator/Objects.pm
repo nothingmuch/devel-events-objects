@@ -100,7 +100,7 @@ sub bless {
 sub object_bless {
     my ( $self, $object, @args ) = @_;
 
-	$self->generate_event( object_bless => object => $object, @args );
+	$self->send_event( object_bless => object => $object, @args );
 	
 	$self->track_object($object);
 }
@@ -108,15 +108,9 @@ sub object_bless {
 sub object_destroy {
 	my ( $self, $object, @args ) = @_;
 
-	$self->generate_event( object_destroy => object => $object, @args );
+	$self->send_event( object_destroy => object => $object, @args );
 
 	$self->untrack_object( $object );
-}
-
-sub generate_event {
-	my ( $self, $type, @event ) = @_;
-
-	$self->send_event( $type => ( @event, generator => $self ) );
 }
 
 use constant tracker_magic => Variable::Magic::wizard(
@@ -300,10 +294,6 @@ Calls C<rack_object>.
 Generates the C<object_destroy> event.
 
 Calls C<untrack_object>.
-
-=item generate_event
-
-Convenience method used by the previous two methods.
 
 =item tracker_magic
 
