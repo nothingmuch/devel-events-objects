@@ -76,7 +76,7 @@ L<Catalyst::Plugin::LeakTracker> for a real world application of these classes.
 =head1 SEE ALSO
 
 L<Devel::Events>, L<Devel::Events::Filter::Size>,
-L<Catalsyt::Plugin::LeakTracker>, L<Devel::Cycle>, L<Devel::Leak::Object>
+L<Catalyst::Plugin::LeakTracker>, L<Devel::Cycle>, L<Devel::Leak::Object>
 
 =head1 AUTHOR
 
