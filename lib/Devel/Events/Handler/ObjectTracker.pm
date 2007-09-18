@@ -111,7 +111,7 @@ Devel::Events::Handler::ObjectTracker - A L<Devel::Events> that tracks leaks
 	$gen->disable();
 
 	use Data::Dumper;
-	warn Dumper($gen->live_objects);
+	warn Dumper($tracker->live_objects);
 
 =head1 DESCRIPTION
 
