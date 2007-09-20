@@ -31,6 +31,8 @@ use Carp qw/croak/;
 use Variable::Magic qw/cast getdata/;
 use Scalar::Util qw/reftype blessed weaken/;
 
+use B qw/svref_2object CVf_CLONED/;
+
 {
 	no warnings 'redefine';
 
@@ -100,9 +102,9 @@ sub bless {
 sub object_bless {
     my ( $self, $object, @args ) = @_;
 
-	$self->send_event( object_bless => object => $object, @args );
-	
-	$self->track_object($object);
+	my $tracked = $self->track_object($object);
+
+	$self->send_event( object_bless => object => $object, tracked => $tracked, @args );
 }
 
 sub object_destroy {
@@ -149,6 +151,14 @@ sub track_object {
 	} elsif ( reftype $object eq 'GLOB' or reftype $object eq 'IO' ) {
 		$objects = getdata ( *$object, $wiz )
 			or cast( *$object, $wiz, ( $objects = [] ) );
+	} elsif ( reftype $object eq 'CODE' ) {
+		unless ( svref_2object($object)->CvFLAGS & CVf_CLONED ) {
+			# can't track it if it never gets garbage collected
+			return;
+		} else {
+			$objects = getdata ( &$object, $wiz )
+				or cast( &$object, $wiz, ( $objects = [] ) );
+		}
 	} else {
 		die "patches welcome";
 	}
@@ -157,6 +167,8 @@ sub track_object {
 		push @$objects, $self;
 		weaken($objects->[-1]);
 	}
+
+	return 1;
 }
 
 sub untrack_object {

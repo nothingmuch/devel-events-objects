@@ -38,8 +38,20 @@ my $tracker = Devel::Events::Handler::ObjectTracker->new();
 	}
 
 	{
-		my $object = bless({}, "Class::C");
-		$object->{foo}{bar}{gorch} = $object;
+		my $circ;
+		my $object = bless(sub { $circ }, "Class::C");
+		$circ = $object;
+	}
+
+	{
+		my $object = bless(sub { }, "Class::D"); # it leaks but we can't help it
+	}
+
+	{
+		my $circ;
+		my $object = bless(sub { $circ }, "Class::E");
+		$circ = $object;
+		weaken($circ);
 	}
 
 	$gen->disable();

@@ -54,6 +54,7 @@ is_deeply(
 		[ object_bless => (
 			generator => "$gen",
 			object    => $obj_str,
+			tracked   => 1,
 			old_class => undef,
 			package   => "main",
 			file      => __FILE__,
@@ -76,6 +77,7 @@ is_deeply(
 		[ object_bless => (
 			generator => "$gen",
 			object    => $obj_str,
+			tracked   => 1,
 			old_class => "Some::Class",
 			package   => "main",
 			file      => __FILE__,

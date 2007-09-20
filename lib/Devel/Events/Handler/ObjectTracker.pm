@@ -43,6 +43,8 @@ sub new_event {
 sub handle_object_bless {
 	my ( $self, %args ) = @_;
 
+	return unless $args{tracked}; # don't keep track of objects that can't be garbage collected (shared code refs for instance)
+
 	my $object = $args{object};
 	my $class = blessed($object);
 
