@@ -20,10 +20,7 @@ has live_objects => (
 has object_to_class => (
 	isa => "HashRef",
 	is  => "ro",
-	default => sub {
-		tie my %hash, 'Tie::RefHash::Weak';
-		\%hash;	
-	},
+	default => sub { +{} },
 );
 
 has class_counters => (
@@ -52,7 +49,7 @@ sub handle_object_bless {
 
 	$class_counters->{$class}++;
 
-	if ( my $old_class = $args{old_class} ) {
+	if ( defined(my $old_class = $args{old_class}) ) {
 		# rebless
 		$class_counters->{$old_class}--;
 	} else {
@@ -62,7 +59,8 @@ sub handle_object_bless {
 	}
 
 	# we need this because in object_destroy it's not blessed anymore
-	( tied %{ $self->object_to_class } )->STORE( $object, $class );
+	#( tied %{ $self->object_to_class } )->STORE( $object, $class );
+	$self->object_to_class->{refaddr($object)} = $class;
 }
 
 sub event_to_entry {
@@ -78,11 +76,9 @@ sub handle_object_destroy {
 	
 	my $object = $args{object};
 
-	( tied %{ $self->live_objects } )->DELETE($object); # it will delete itself... is this necessary?
-
-	my $class = ( tied %{ $self->object_to_class } )->DELETE($object) || return;
-
-	$self->class_counters->{$class}--;
+	if ( defined( my $class = delete($self->object_to_class->{refaddr($object)}) ) ) {
+		$self->class_counters->{$class}--;
+	}
 }
 
 __PACKAGE__;
