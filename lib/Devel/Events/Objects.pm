@@ -51,7 +51,7 @@ Devel::Events::Objects - Object tracking support for L<Devel::Events>
 		print "Leaked object: $object\n";
 
 		# the event that generated it
-		print Dumper( $object, $tracker->live_object->{$object} );
+		print Dumper( $object, $tracker->live_objects->{$object} );
 
 		find_cycle( $object );
 	}
