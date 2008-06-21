@@ -19,7 +19,7 @@ BEGIN {
 
 sub _core_bless {
 	my ( $data, $class ) = @_;
-	$class = caller unless defined $class;
+	$class = caller(1) unless defined $class;
 	CORE::bless($data, $class);
 }
 
@@ -42,7 +42,7 @@ use B qw/svref_2object CVf_CLONED/;
 
 	*_core_bless = sub {
 		my ( $data, $class ) = @_;
-		$class = caller unless defined $class;
+		$class = caller(1) unless defined $class;
 
 		my ( $object, $e );
 		
@@ -77,7 +77,7 @@ sub disable {
 
 sub bless {
 	my ( $self, $data, $class ) = @_;
-	$class = caller unless defined $class;
+	$class = caller(1) unless defined $class;
 
 	my $old_class = blessed($data);
 
@@ -89,6 +89,7 @@ sub bless {
 
 	$self->object_bless(
 		$object,
+		class     => $class,
 		old_class => $old_class,
 		'package' => $pkg,
 		file      => $file,
