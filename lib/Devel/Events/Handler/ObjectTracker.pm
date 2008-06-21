@@ -5,7 +5,7 @@ use Moose;
 
 with qw/Devel::Events::Handler/;
 
-use Scalar::Util qw/refaddr blessed weaken/;
+use Scalar::Util qw/refaddr weaken/;
 use Tie::RefHash::Weak;
 
 has live_objects => (
@@ -43,7 +43,7 @@ sub handle_object_bless {
 	return unless $args{tracked}; # don't keep track of objects that can't be garbage collected (shared code refs for instance)
 
 	my $object = $args{object};
-	my $class = blessed($object);
+	my $class  = $args{class};
 
 	my $class_counters = $self->class_counters;
 
