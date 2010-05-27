@@ -140,7 +140,7 @@ sub track_object {
 
 	my $wiz = $self->tracker_magic($object);
 
-	if ( reftype $object eq 'SCALAR' ) {
+	if ( reftype $object eq 'SCALAR' or reftype $object eq 'REF' ) {
 		$objects = getdata( $$object, $wiz )
 			or cast( $$object, $wiz, ( $objects = [] ) );
 	} elsif ( reftype $object eq 'HASH' ) {
